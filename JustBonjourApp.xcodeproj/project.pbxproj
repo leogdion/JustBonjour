@@ -14,6 +14,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B314C0152C30E94200EF8567 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		B3EF258B2C30E21B00F35EE6 /* JustBonjourApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JustBonjourApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3EF258E2C30E21B00F35EE6 /* JustBonjourAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JustBonjourAppApp.swift; sourceTree = "<group>"; };
 		B3EF25902C30E21B00F35EE6 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -51,6 +52,7 @@
 		B3EF258D2C30E21B00F35EE6 /* JustBonjourApp */ = {
 			isa = PBXGroup;
 			children = (
+				B314C0152C30E94200EF8567 /* Info.plist */,
 				B3EF258E2C30E21B00F35EE6 /* JustBonjourAppApp.swift */,
 				B3EF25902C30E21B00F35EE6 /* ContentView.swift */,
 				B3EF25922C30E21D00F35EE6 /* Assets.xcassets */,
@@ -278,6 +280,8 @@
 				DEVELOPMENT_TEAM = MLT7M394S7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = JustBonjourApp/Info.plist;
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Network usage is required for macOS/iOS communication";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -307,6 +311,8 @@
 				DEVELOPMENT_TEAM = MLT7M394S7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = JustBonjourApp/Info.plist;
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Network usage is required for macOS/iOS communication";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
