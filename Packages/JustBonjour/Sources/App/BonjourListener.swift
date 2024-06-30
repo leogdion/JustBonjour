@@ -9,6 +9,17 @@ import ServiceLifecycle
 import NIOTransportServices
 import NIOCore
 import Foundation
+import JBKit
+import Network
+
+extension ServerConfiguration {
+  init(isSecure: Bool? = nil, port: Int? = nil, hosts: [String] = []) {
+    self.init()
+    self.isSecure = isSecure ?? false
+    self.port = port.map(UInt32.init) ?? 8_080
+    self.hosts = hosts
+  }
+}
 
 struct BonjourListener : Service {
   public static let httpTCPServiceType = "_sublimation._tcp"
@@ -16,7 +27,15 @@ struct BonjourListener : Service {
   func run() async throws {
     let bootstrap = NIOTSListenerBootstrap(group: NIOTSEventLoopGroup.singleton)
 
-    let data = Data("Hello World".utf8)
+    let hosts = Host.current().addresses
+    let serverConfiguration = ServerConfiguration(
+      isSecure: false,
+      port: 8080,
+      hosts: hosts
+    )
+    
+    let data = try serverConfiguration.serializedData()
+    //let data = Data("Hello World".utf8)
 //    let addresses = await self.addresses()
 //
 //    let configuration = ServerConfiguration(isSecure: false, port: 8_080, hosts: addresses)

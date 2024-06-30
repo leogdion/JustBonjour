@@ -11,6 +11,7 @@
 		B3EF25912C30E21B00F35EE6 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EF25902C30E21B00F35EE6 /* ContentView.swift */; };
 		B3EF25932C30E21D00F35EE6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B3EF25922C30E21D00F35EE6 /* Assets.xcassets */; };
 		B3EF25962C30E21D00F35EE6 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B3EF25952C30E21D00F35EE6 /* Preview Assets.xcassets */; };
+		B3F254F72C30F81F00ED301F /* JBKit in Frameworks */ = {isa = PBXBuildFile; productRef = B3F254F62C30F81F00ED301F /* JBKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +28,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3F254F72C30F81F00ED301F /* JBKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -38,6 +40,7 @@
 			children = (
 				B3EF258D2C30E21B00F35EE6 /* JustBonjourApp */,
 				B3EF258C2C30E21B00F35EE6 /* Products */,
+				B3F254F52C30F81F00ED301F /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -69,6 +72,13 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		B3F254F52C30F81F00ED301F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -85,6 +95,9 @@
 			dependencies = (
 			);
 			name = JustBonjourApp;
+			packageProductDependencies = (
+				B3F254F62C30F81F00ED301F /* JBKit */,
+			);
 			productName = JustBonjourApp;
 			productReference = B3EF258B2C30E21B00F35EE6 /* JustBonjourApp.app */;
 			productType = "com.apple.product-type.application";
@@ -360,6 +373,14 @@
 			relativePath = Packages/JustBonjour;
 		};
 /* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B3F254F62C30F81F00ED301F /* JBKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B314C0142C30E49000EF8567 /* XCLocalSwiftPackageReference "Packages/JustBonjour" */;
+			productName = JBKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B3EF25832C30E21B00F35EE6 /* Project object */;
 }

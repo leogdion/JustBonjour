@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Network
+import JBKit
 
 struct ContentView: View {
   @State var text = ""
@@ -33,9 +34,13 @@ struct ContentView: View {
                   print(isComplete)
                   return
                 }
-                let text = String(decoding: content, as: UTF8.self)
+                
+                guard let configuration = try? ServerConfiguration(serializedData: content) else {
+                  return
+                }
                 Task { @MainActor in
-                  self.text = text
+                  dump(configuration)
+                  self.text = configuration.hosts.first ?? "NONE"
                 }
               }
               connection.start(queue: .global())
