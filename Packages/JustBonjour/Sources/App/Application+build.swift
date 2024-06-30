@@ -22,7 +22,7 @@ public func buildApplication(_ arguments: some AppArguments) -> some Application
     router.get("/health") { _,_ -> HTTPResponse.Status in
         return .ok
     }
-    let app = Application(
+    var app = Application(
         router: router,
         configuration: .init(
             address: .hostname(arguments.hostname, port: arguments.port),
@@ -30,5 +30,6 @@ public func buildApplication(_ arguments: some AppArguments) -> some Application
         ),
         logger: logger
     )
+    app.addServices(BonjourListener())
     return app
 }
