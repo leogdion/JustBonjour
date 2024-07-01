@@ -11,33 +11,37 @@ import JBKit
 
 struct ContentView: View {
   @State var text = ""
+  
+  func receiveMessage(from connection: NWConnection, _ content: Data?, _ contentContext: NWConnection.ContentContext?, _ isComplete: Bool, _ error: Error?) {
+    if let error {
+      dump(error)
+      return
+    }
+    guard let content else {
+      print("isFinal", contentContext?.isFinal == true)
+      print("isComplete", isComplete)
+      
+      return
+    }
+    
+    guard let configuration = try? ServerConfiguration(serializedData: content) else {
+      print(String(bytes: content, encoding: .utf8))
+      return
+    }
+    Task { @MainActor in
+      dump(configuration)
+      self.text = configuration.hosts.first ?? "NONE"
+    }
+  }
   fileprivate func beginConnectionTo(_ endpoint: NWEndpoint) {
     let connection = NWConnection(to: endpoint, using: .tcp)
+    
     connection.stateUpdateHandler = { state in
       switch state {
         
       case .ready:
         connection.receiveMessage { content, contentContext, isComplete, error in
-          if let error {
-            dump(error)
-            return
-          }
-          guard let content else {
-            print("isFinal", contentContext?.isFinal == true)
-            print("isComplete", isComplete)
-            connection.cancel()
-            self.beginConnectionTo(connection.endpoint)
-            return
-          }
-          
-          guard let configuration = try? ServerConfiguration(serializedData: content) else {
-            print(String(bytes: content, encoding: .utf8))
-            return
-          }
-          Task { @MainActor in
-            dump(configuration)
-            self.text = configuration.hosts.first ?? "NONE"
-          }
+          self.receiveMessage(from: connection, content, contentContext, isComplete, error)
         }
       default:
         dump(state)
@@ -61,7 +65,6 @@ struct ContentView: View {
           browser.browseResultsChangedHandler = { results, changes in
             
             for result in results {
-              let endpoint = result.endpoint
               beginConnectionTo(result.endpoint)
             }
           }
