@@ -64,12 +64,14 @@ struct BonjourListener : Service {
 
                     print("Writing \(data.count) bytes")
 
+                    //try await outbound.write(.init(data: Data()))
                     try await outbound.write(.init(data: data))
+                    //try await outbound.write(.init(data: Data()))
                     print("Finishing")
                     //outbound.finish()
                     //try!  await Task.sleep(for: .seconds(1.0))
                     print("Closing Child Channel")
-                    outbound.finish()
+                    //outbound.finish()
                   }
               } catch {
                 dump(error)
