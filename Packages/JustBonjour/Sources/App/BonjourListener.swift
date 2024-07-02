@@ -6,8 +6,6 @@
 //
 
 import ServiceLifecycle
-import NIOTransportServices
-import NIOCore
 import Foundation
 import JBKit
 import Network
@@ -25,71 +23,73 @@ struct BonjourListener : Service {
   public static let httpTCPServiceType = "_sublimation._tcp"
   
   func run() async throws {
-    let bootstrap = NIOTSListenerBootstrap(group: NIOTSEventLoopGroup.singleton)
-
-    let hosts = Host.current().addresses
-    let serverConfiguration = ServerConfiguration(
-      isSecure: false,
-      port: 8080,
-      hosts: hosts
-    )
-    
-    let data = try serverConfiguration.serializedData()
-    //let data = Data("Hello World".utf8)
-//    let addresses = await self.addresses()
-//
-//    let configuration = ServerConfiguration(isSecure: false, port: 8_080, hosts: addresses)
-
-    let channel = try await bootstrap.bind(endpoint: .service(name: "Sublimation", type: Self.httpTCPServiceType, domain: "local.", interface: nil)) { channel in
-      channel.eventLoop.makeCompletedFuture {
-        
-        try NIOAsyncChannel<ByteBuffer, ByteBuffer>(
-          wrappingChannelSynchronously: channel
+        let hosts = Host.current().addresses
+        let serverConfiguration = ServerConfiguration(
+          isSecure: false,
+          port: 8080,
+          hosts: hosts
         )
-      }
-    }
-    print("Starting Service")
-    await withDiscardingTaskGroup { group in
-      do {
-        try await channel.executeThenClose { clients in
-          // dump(inbound)
+    let data = try serverConfiguration.serializedData()
+    
+   
 
-          for try await childChannel in clients {
-            //dump(childChannel)
-            print("Received Client")
-            //dump(childChannel)
-              do {
-
-                  try await childChannel.executeThenClose { inbound, outbound in
-
-                    print("Writing \(data.count) bytes")
-
-                    //try await outbound.write(.init(data: Data()))
-                    try await outbound.write(.init(data: data))
-                    //try await outbound.write(.init(data: Data()))
-                    print("Finishing")
-                    //outbound.finish()
-                    //try!  await Task.sleep(for: .seconds(1.0))
-                    print("Closing Child Channel")
-                    //outbound.finish()
-                  }
-              } catch {
-                dump(error)
-              }
-              // print(String(decoding: data, as: UTF8.self))
+      let listener = try NWListener(
+        service: .init(
+          name: "Sublimation",
+          type: Self.httpTCPServiceType,
+          domain: "local."
+        ),
+        using: .tcp
+      )
+      
+      listener.newConnectionHandler = { connection in
+        connection.stateUpdateHandler = { state in
+          switch state {
             
-            // outbound.write(data)
+          case .waiting(let error):
+            
+              print("Connection Waiting error: \(error)")
+            
+          case .ready:
+            
+              connection.send(content: data, completion: .contentProcessed({ error in
+                print("content sent")
+                dump(error)
+              }))
+          case .failed(let error):
+            print("Connection Failure: \(error)")
+          
+          default:
+            print("Connection state updated: \(state)")
           }
-          print("Closing Main Channel")
         }
-      } catch {
-        print("Waiting on child channel: \(error)")
+        connection.start(queue: .global())
+        
+      }
+      
+      listener.start(queue: .global())
+      
+    return try await withCheckedThrowingContinuation { continuation in
+      listener.stateUpdateHandler = { state in
+        switch state {
+          
+        case .waiting(let error):
+          
+            print("Listener Waiting error: \(error)")
+          continuation.resume(throwing: error)
+        
+        case .failed(let error):
+          print("Listener Failure: \(error)")
+          continuation.resume(throwing: error)
+        case .cancelled:
+          continuation.resume()
+        default:
+          print("Listener state updated: \(state)")
+        }
       }
     }
 
-    print("Closing out")
-    // let channel = try await bootstrap.withNWListener(listener)
-    // try await channel.closeFuture.get()
+    
   
   }
   

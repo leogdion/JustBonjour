@@ -38,13 +38,20 @@ struct ContentView: View {
     
     connection.stateUpdateHandler = { state in
       switch state {
+      case .waiting(let error):
         
+          print("Connection Waiting error: \(error)")
+        
+      case .failed(let error):
+        print("Connection Failure: \(error)")
+      
       case .ready:
         connection.receiveMessage { content, contentContext, isComplete, error in
           self.receiveMessage(from: connection, content, contentContext, isComplete, error)
         }
-      default:
-        dump(state)
+        default:
+          print("Connection state updated: \(state)")
+
       }
     }
     
