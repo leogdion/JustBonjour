@@ -33,8 +33,23 @@ struct ContentView: View {
       self.text = configuration.hosts.first ?? "NONE"
     }
   }
+  private func newConnectionEndpoint(from endpoint: NWEndpoint) -> NWEndpoint? {
+    switch endpoint {
+    case .service(let name, let type, let domain, _):
+        print("Found service: \(name) \(type) \(domain)")
+        return NWEndpoint.service(name: name, type: type, domain: domain, interface: nil)
+    default:
+      print("Unsupported Endpoint: \(endpoint.debugDescription)")
+        return nil
+    }
+  }
   fileprivate func beginConnectionTo(_ endpoint: NWEndpoint) {
-    let connection = NWConnection(to: endpoint, using: .tcp)
+    guard let newEndpoint = newConnectionEndpoint(from: endpoint) else {
+      return
+    }
+    let parameters = NWParameters.tcp
+    //parameters.includePeerToPeer = true
+    let connection = NWConnection(to: newEndpoint, using: parameters)
     
     connection.stateUpdateHandler = { state in
       switch state {
@@ -46,6 +61,7 @@ struct ContentView: View {
         print("Connection Failure: \(error)")
       
       case .ready:
+        print("Connection ready")
         connection.receiveMessage { content, contentContext, isComplete, error in
           self.receiveMessage(from: connection, content, contentContext, isComplete, error)
         }
@@ -55,7 +71,7 @@ struct ContentView: View {
       }
     }
     
-    connection.start(queue: .global())
+    connection.start(queue: .main)
     print("connection started")
   }
   
@@ -68,14 +84,14 @@ struct ContentView: View {
         }
         .padding()
         .onAppear {
-          let browser = NWBrowser(for: .bonjour(type: "_sublimation._tcp", domain: "local."), using: .tcp)
+          let browser = NWBrowser(for: .bonjour(type: "_sublimation._tcp", domain: nil), using: .tcp)
           browser.browseResultsChangedHandler = { results, changes in
             
             for result in results {
               beginConnectionTo(result.endpoint)
             }
           }
-          browser.start(queue: .global())
+          browser.start(queue: .main)
           print("browser started")
         }
     }

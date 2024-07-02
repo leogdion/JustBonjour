@@ -31,16 +31,13 @@ struct BonjourListener : Service {
         )
     let data = try serverConfiguration.serializedData()
     
-   
+    
+    let parameters = NWParameters.tcp
+    //parameters.includePeerToPeer = true
 
-      let listener = try NWListener(
-        service: .init(
-          name: "Sublimation",
-          type: Self.httpTCPServiceType,
-          domain: "local."
-        ),
-        using: .tcp
-      )
+    
+      let listener = try NWListener(using: .tcp)
+    listener.service = .init(name: "Sublimation", type: Self.httpTCPServiceType)
       
       listener.newConnectionHandler = { connection in
         connection.stateUpdateHandler = { state in
@@ -51,10 +48,12 @@ struct BonjourListener : Service {
               print("Connection Waiting error: \(error)")
             
           case .ready:
-            
+            print("Connection Ready ")
+            print("Sending \(data.count) bytes")
               connection.send(content: data, completion: .contentProcessed({ error in
                 print("content sent")
                 dump(error)
+                connection.cancel()
               }))
           case .failed(let error):
             print("Connection Failure: \(error)")
